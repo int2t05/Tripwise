@@ -19,6 +19,7 @@ const builderConfig = readFileSync(path.join(projectRoot, 'electron-builder.yml'
 const selectedPlatform = process.argv.find((argument) => argument.startsWith('--platform='))?.split('=')[1] ?? 'all'
 const forceArtifactsOnly = process.argv.includes('--artifacts-only')
 const forceFullVerification = process.argv.includes('--full')
+const checksumsOnly = process.argv.includes('--checksums-only')
 const productName = builderConfig.match(/^productName:\s*["']?(.+?)["']?\s*$/m)?.[1]
 const distributableExtensions = new Set(['.AppImage', '.dmg', '.exe', '.zip'])
 const FUSE_ENABLED = '1'.charCodeAt(0)
@@ -29,6 +30,7 @@ const hasBuildStage = outputEntries.some((entry) => entry.isDirectory() && build
 const artifactsOnly = forceArtifactsOnly || (!forceFullVerification && !hasBuildStage)
 
 assert.ok(!(forceArtifactsOnly && forceFullVerification), '不能同时请求只验证安装包和完整构建验证。')
+assert.ok(!checksumsOnly || forceArtifactsOnly, '--checksums-only 只能与 --artifacts-only 一起使用。')
 assert.ok(productName, 'electron-builder.yml 必须声明 productName。')
 assert.ok(['all', 'mac', 'win', 'linux'].includes(selectedPlatform), '候选包验证平台必须是 all、mac、win 或 linux。')
 assert.ok(
@@ -220,7 +222,9 @@ function packagePlatform(name) {
 }
 
 await verifyChecksums()
-verifyContainers()
-verifyMacSignature()
-await verifyApplicationArchives()
-await verifyElectronFuses()
+if (!checksumsOnly) {
+  verifyContainers()
+  verifyMacSignature()
+  await verifyApplicationArchives()
+  await verifyElectronFuses()
+}

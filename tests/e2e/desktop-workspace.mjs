@@ -2247,9 +2247,14 @@ try {
   await navigation.getByRole('button', { name: '删除杭州', exact: true }).click()
   const repeatedReviewDeleteDialog = page.getByRole('dialog', { name: '删除“杭州”' })
   await repeatedReviewDeleteDialog.getByRole('button', { name: '删除旅行资料', exact: true }).click()
+  await page.getByRole('status').filter({ hasText: '已删除这趟旅行' }).waitFor({ state: 'visible' })
   await page.waitForFunction(async (tripId) => {
-    const snapshot = await window.tripwise.getSnapshot()
-    return !snapshot.trips.some((trip) => trip.id === tripId)
+    for (let sample = 0; sample < 3; sample += 1) {
+      const snapshot = await window.tripwise.getSnapshot()
+      if (snapshot.trips.some((trip) => trip.id === tripId)) return false
+      if (sample < 2) await new Promise((resolve) => setTimeout(resolve, 100))
+    }
+    return true
   }, repeatedReviewTripId, { timeout: 5_000 })
   const repeatedReviewCleanup = await page.evaluate(async () => {
     const snapshot = await window.tripwise.getSnapshot()
