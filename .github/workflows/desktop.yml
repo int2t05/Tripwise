@@ -33,7 +33,7 @@ jobs:
               release-candidate/SHA256SUMS
           - platform: win
             runner: windows-2022
-            executable: release-candidate/win-unpacked/行程有数.exe
+            executable: release-candidate-test/win-unpacked/行程有数.exe
             artifact_paths: |
               release-candidate/*.exe
               release-candidate/*-win.zip
@@ -88,6 +88,10 @@ jobs:
         if: github.event_name != 'pull_request' && matrix.platform == 'linux'
         run: node node_modules/electron-builder/cli.js --linux --x64 --dir --publish never --config.directories.output=release-candidate-test
 
+      - name: Build unpacked Windows test application
+        if: github.event_name != 'pull_request' && matrix.platform == 'win'
+        run: node node_modules/electron-builder/cli.js --win --x64 --dir --publish never --config.directories.output=release-candidate-test
+
       - name: Packaged end-to-end test (Windows)
         if: github.event_name != 'pull_request' && matrix.platform == 'win'
         env:
@@ -109,6 +113,6 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
-      - name: Remove Linux test application
-        if: always() && matrix.platform == 'linux'
-        run: rm -rf release-candidate-test
+      - name: Remove packaged test application
+        if: always() && matrix.platform != 'mac'
+        run: node -e "require('node:fs').rmSync('release-candidate-test', { recursive: true, force: true })"

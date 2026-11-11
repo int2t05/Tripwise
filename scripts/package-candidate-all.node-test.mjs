@@ -142,6 +142,8 @@ describe('候选包输出目录', () => {
     assert.match(jobConfiguration, /executable: release-candidate\//u)
     assert.match(jobConfiguration, /artifact_paths:[\s\S]*?release-candidate\//u)
     assert.match(workflow, /Build unpacked Linux test application[\s\S]*?release-candidate-test/u)
+    assert.match(workflow, /Build unpacked Windows test application[\s\S]*?release-candidate-test/u)
+    assert.match(workflow, /Remove packaged test application/u)
     assert.match(workflow, /TRIPWISE_CANDIDATE_PRECHECK: passed/u)
   })
 })
