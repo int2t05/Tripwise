@@ -77,17 +77,17 @@ describe('Electron 本机运行时缓存', () => {
   })
 
   it('按平台和环境变量生成去重后的缓存位置', () => {
-    const macDefault = join('/home/tester', 'Library', 'Caches', 'electron')
+    const macDefault = resolve(join('/home/tester', 'Library', 'Caches', 'electron'))
     assert.deepEqual(electronCacheDirectories({
       platform: 'darwin',
       home: '/home/tester',
       env: { ELECTRON_CACHE: macDefault }
-    }), [macDefault, '/home/tester/.cache/electron'])
+    }), [macDefault, resolve(join('/home/tester', '.cache', 'electron'))])
     assert.deepEqual(electronCacheDirectories({
       platform: 'linux',
       home: '/home/tester',
       env: { XDG_CACHE_HOME: '/tmp/cache' }
-    }), ['/tmp/cache/electron', '/home/tester/.cache/electron'])
+    }), [resolve('/tmp/cache/electron'), resolve(join('/home/tester', '.cache', 'electron'))])
 
     const windowsHome = tmpdir()
     const localAppData = join(windowsHome, 'local-app-data')
@@ -118,7 +118,8 @@ describe('候选包输出目录', () => {
   it('默认使用候选目录，并允许同级的独立候选目录', () => {
     assert.equal(candidateOutputDirectoryName({}), 'release-candidate-current')
     assert.equal(candidateOutputDirectoryName({ TRIPWISE_CANDIDATE_OUTPUT: 'release-candidate-copy-review' }), 'release-candidate-copy-review')
-    assert.equal(candidateOutputDirectory('/project', { TRIPWISE_CANDIDATE_OUTPUT: 'release-candidate-copy-review' }), '/project/release-candidate-copy-review')
+    assert.equal(candidateOutputDirectory('/project', { TRIPWISE_CANDIDATE_OUTPUT: 'release-candidate-copy-review' }),
+      resolve('/project/release-candidate-copy-review'))
   })
 
   it('拒绝绝对路径、目录穿越和非候选目录名', () => {
@@ -129,7 +130,7 @@ describe('候选包输出目录', () => {
 
   it('GitHub 桌面矩阵把打包、E2E 与 artifact 上传固定到同一输出目录', async () => {
     const workflowPath = new URL('../.github/workflows/desktop.yml', import.meta.url)
-    const workflow = await readFile(workflowPath, 'utf8')
+    const workflow = (await readFile(workflowPath, 'utf8')).replace(/\r\n/gu, '\n')
     const jobStart = workflow.indexOf('  desktop:\n')
     const stepsStart = workflow.indexOf('    steps:\n', jobStart)
     assert.notEqual(jobStart, -1)
@@ -140,6 +141,7 @@ describe('候选包输出目录', () => {
     assert.equal(candidateOutputDirectoryName({ TRIPWISE_CANDIDATE_OUTPUT: 'release-candidate' }), 'release-candidate')
     assert.match(jobConfiguration, /executable: release-candidate\//u)
     assert.match(jobConfiguration, /artifact_paths:[\s\S]*?release-candidate\//u)
+    assert.match(workflow, /Build unpacked Linux test application[\s\S]*?release-candidate-test/u)
   })
 })
 
@@ -176,7 +178,9 @@ describe('候选安装包发布', () => {
 
     const expectedNames = [...files.map((file) => file.name), 'SHA256SUMS'].sort((left, right) => left.localeCompare(right, 'en'))
     assert.deepEqual(await readdir(destination), expectedNames)
-    assert.equal((await stat(join(destination, '行程有数-0.1.0.AppImage'))).mode & 0o777, 0o755)
+    if (process.platform !== 'win32') {
+      assert.equal((await stat(join(destination, '行程有数-0.1.0.AppImage'))).mode & 0o777, 0o755)
+    }
   })
 
   it('拒绝覆盖已经存在的候选目录', async () => {

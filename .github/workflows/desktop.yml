@@ -40,7 +40,7 @@ jobs:
               release-candidate/SHA256SUMS
           - platform: linux
             runner: ubuntu-22.04
-            executable: release-candidate/linux-unpacked/tripwise
+            executable: release-candidate-test/linux-unpacked/tripwise
             artifact_paths: |
               release-candidate/*.AppImage
               release-candidate/SHA256SUMS
@@ -82,6 +82,10 @@ jobs:
         if: github.event_name != 'pull_request'
         run: npm run "package:candidate:${{ matrix.platform }}"
 
+      - name: Build unpacked Linux test application
+        if: github.event_name != 'pull_request' && matrix.platform == 'linux'
+        run: node node_modules/electron-builder/cli.js --linux --x64 --dir --publish never --config.directories.output=release-candidate-test
+
       - name: Packaged end-to-end test (Windows)
         if: github.event_name != 'pull_request' && matrix.platform == 'win'
         env:
@@ -102,3 +106,7 @@ jobs:
           path: ${{ matrix.artifact_paths }}
           if-no-files-found: error
           retention-days: 14
+
+      - name: Remove Linux test application
+        if: always() && matrix.platform == 'linux'
+        run: rm -rf release-candidate-test
