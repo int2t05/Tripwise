@@ -13,7 +13,7 @@
   "scripts": {
     "dev": "electron-vite dev",
     "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.main.json && tsc --noEmit -p tsconfig.preload.json",
-    "test": "vitest run && node --test scripts/package-candidate-all.node-test.mjs scripts/evaluate-travel-results.node-test.mjs scripts/beijing-case-metrics.node-test.mjs",
+    "test": "vitest run && node --test --test-concurrency=1 scripts/package-candidate-all.node-test.mjs scripts/evaluate-travel-results.node-test.mjs scripts/beijing-case-metrics.node-test.mjs",
     "test:e2e:desktop": "npm run build && node tests/e2e/desktop-workspace.mjs && node tests/e2e/single-instance.mjs",
     "test:e2e:firecrawl-live": "npm run build && node tests/e2e/firecrawl-browser-fallback-live.mjs",
     "evaluate:beijing:desktop-live": "npm run build && node tests/e2e/beijing-desktop-live.mjs",
