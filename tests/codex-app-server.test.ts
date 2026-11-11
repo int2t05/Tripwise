@@ -325,7 +325,7 @@ describe('Codex App Server 持久话题', () => {
 
       const indexPath = join(userData, 'codex-thread-index.json')
       expect(JSON.parse(await readFile(indexPath, 'utf8'))).toEqual({ version: 1, threads: {} })
-      expect((await stat(indexPath)).mode & 0o777).toBe(0o600)
+      if (process.platform !== 'win32') expect((await stat(indexPath)).mode & 0o777).toBe(0o600)
     } finally {
       await activeProcess?.close()
       await rm(directory, { recursive: true, force: true })

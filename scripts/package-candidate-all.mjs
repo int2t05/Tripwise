@@ -230,7 +230,7 @@ export async function cleanCandidateBuildResidue(directory) {
 async function buildTarget(key, outputDirectoryName, outputDirectory, env) {
   const target = platforms[key]
   const archive = await resolveRuntimeArchive(target, env)
-  const args = [...target.args, `--config.directories.output=${outputDirectoryName}`]
+  const args = [...target.args, `--config.directories.output=${outputDirectoryName}`, '--publish', 'never']
   if (archive) args.push(`--config.electronDist=${archive}`)
   const builderCli = join(projectRoot, 'node_modules', 'electron-builder', 'cli.js')
 

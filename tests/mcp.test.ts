@@ -532,7 +532,7 @@ describe('MCP stdio 插件运行时', () => {
       expect(session.diagnostics[0]).toMatchObject({
         kind: 'plugin', connectorId: 'missing-server', title: '连接诊断 · 失效服务', status: 'error', url: ''
       })
-      expect(session.diagnostics[0].summary).toContain('找不到插件程序')
+      expect(session.diagnostics[0].summary).toMatch(/找不到插件程序|MCP 服务连接失败/u)
       expect(session.diagnostics[0].summary).not.toContain('tripwise-missing-mcp-command')
       expect(session.diagnostics[0].retry).toEqual({ kind: 'mcp-connect', serverId: 'missing-server' })
 

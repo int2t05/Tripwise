@@ -186,8 +186,9 @@ const BROWSER_CURSOR_HELPER = `
     }
     return movementRequested
   }
-  const scrollTargetIntoView = (element, reduceMotion) => {
-    element.scrollIntoView({ block: 'center', inline: 'center', behavior: reduceMotion ? 'instant' : 'smooth' })
+  const scrollTargetIntoView = (element) => {
+    // 目标定位必须在有限帧内稳定；平滑滚动由页面 CSS 控制时会造成跨平台竞态。
+    element.scrollIntoView({ block: 'center', inline: 'center', behavior: 'instant' })
     let movementRequested = false
     let ancestor = element.parentElement
     while (ancestor && ancestor !== document.documentElement) {
@@ -260,8 +261,7 @@ const BROWSER_CURSOR_HELPER = `
     if (!element || !element.isConnected) return { ok: false, stage: 'target_not_rendered' }
     const initialRect = element.getBoundingClientRect()
     const initialPosition = [initialRect.top, initialRect.left, initialRect.width, initialRect.height]
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    const movementRequested = scrollTargetIntoView(element, reduceMotion)
+    const movementRequested = scrollTargetIntoView(element)
     const scrollResult = await waitForElementScrollStable(element, initialPosition, movementRequested)
     if (!element.isConnected) return { ok: false, stage: 'target_detached_during_scroll' }
     if (!scrollResult.stable) {
