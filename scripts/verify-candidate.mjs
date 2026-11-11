@@ -156,8 +156,10 @@ async function verifyApplicationArchives() {
       for (const relativePath of currentFiles) {
         const archiveEntry = `out/${relativePath.split(path.sep).join('/')}`
         assert.ok(entries.has(archiveEntry), `${archive} 缺少 ${archiveEntry}。`)
+        // ASAR 的查询路径按 Node 当前平台拆分，匹配清单时用 POSIX 路径，读取时再转回本机分隔符。
+        const extractionPath = archiveEntry.split('/').join(path.sep)
         assert.ok(
-          extractFile(archive, archiveEntry).equals(readFileSync(path.join(projectRoot, 'out', relativePath))),
+          extractFile(archive, extractionPath).equals(readFileSync(path.join(projectRoot, 'out', relativePath))),
           `${archive} 中的 ${archiveEntry} 与当前构建不一致。`
         )
       }
