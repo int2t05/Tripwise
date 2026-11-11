@@ -152,7 +152,7 @@ async function verifyApplicationArchives() {
 
   for (const archive of archives) {
     try {
-      const entries = new Set(listPackage(archive).map((entry) => entry.replace(/^\//, '')))
+      const entries = new Set(listPackage(archive).map((entry) => entry.replace(/\\/gu, '/').replace(/^\/+/, '')))
       for (const relativePath of currentFiles) {
         const archiveEntry = `out/${relativePath.split(path.sep).join('/')}`
         assert.ok(entries.has(archiveEntry), `${archive} 缺少 ${archiveEntry}。`)

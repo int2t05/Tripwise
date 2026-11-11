@@ -22,6 +22,8 @@ let researchProxyProbeServer
 
 const WCAG_22_AA_TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa']
 const RESEARCH_BADGE_TARGET = '.research-panel-tabs > button.selected > span'
+// 虚拟桌面首次绘制独立 WebView 较慢；打包截图仍使用有上限的 CDP 等待。
+const PACKAGED_BROWSER_CDP_TIMEOUT_MS = 15_000
 // 仅用于本机模拟服务的假凭证，不是任何真实服务密钥。
 const MODEL_PROBE_FIXTURE_KEY = 'tripwise-e2e-fixture-key'
 
@@ -147,7 +149,7 @@ async function sendPackagedBrowserCommand(application, method, params = {}) {
     const timeout = setTimeout(() => {
       state.pending.delete(id)
       reject(new Error('打包版研究网页截图超时。'))
-    }, 5_000)
+    }, PACKAGED_BROWSER_CDP_TIMEOUT_MS)
     state.pending.set(id, { resolve, reject, timeout, readResult: (result) => result ?? null })
     state.session.send('Target.sendMessageToTarget', {
       sessionId: state.sessionId,
