@@ -66,11 +66,7 @@ async function readBrowserCursor(application, targetSelector = '#expand') {
     }, targetSelector)
   }
 
-  // 打包版通过 Chromium CDP 连接，直接从研究网页对应的 renderer 读取同一标记。
-  const pages = application.browser?.contexts().flatMap((context) => context.pages()) ?? []
-  const browserPage = pages.find((page) => {
-    try { return ['/agent-browser-interact', '/agent-browser-search'].includes(new URL(page.url()).pathname) } catch { return false }
-  })
+  // 打包版统一经 CDP 读取 WebContentsView，确保读取与截图复用同一目标会话。
   const readMarker = (selector) => {
     const marker = document.querySelector('[data-tripwise-agent-cursor]')
     if (!marker) return null
@@ -86,7 +82,6 @@ async function readBrowserCursor(application, targetSelector = '#expand') {
       targetY: rect ? rect.top + rect.height / 2 : null
     }
   }
-  if (browserPage) return browserPage.evaluate(readMarker, targetSelector)
   return readPackagedBrowserCursor(application, readMarker, targetSelector)
 }
 
