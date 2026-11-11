@@ -270,16 +270,20 @@ describe('Codex App Server 持久话题', () => {
     const directory = await mkdtemp(join(tmpdir(), 'tripwise-codex-app-server-'))
     const userData = join(directory, 'user-data')
     const logPath = join(directory, 'protocol.jsonl')
+    let activeProcess: ReturnType<typeof createServer> | undefined
     try {
       const firstProcess = createServer(userData, logPath)
+      activeProcess = firstProcess
       await expect(firstProcess.complete(request())).resolves.toMatchObject({ text: expect.any(String), chunkCount: 1 })
       await expect(firstProcess.complete(request({
         phase: 'continue',
         toolOutput: JSON.stringify({ status: 'warning', result: 'route estimate unavailable' })
       }))).resolves.toMatchObject({ text: expect.any(String), chunkCount: 1 })
       await firstProcess.close()
+      activeProcess = undefined
 
       const resumedProcess = createServer(userData, logPath)
+      activeProcess = resumedProcess
       await expect(resumedProcess.complete(request({
         phase: 'run-start',
         fullPrompt: 'must not replace a resumed thread',
@@ -323,6 +327,7 @@ describe('Codex App Server 持久话题', () => {
       expect(JSON.parse(await readFile(indexPath, 'utf8'))).toEqual({ version: 1, threads: {} })
       expect((await stat(indexPath)).mode & 0o777).toBe(0o600)
     } finally {
+      await activeProcess?.close()
       await rm(directory, { recursive: true, force: true })
     }
   })

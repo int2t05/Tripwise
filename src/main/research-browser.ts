@@ -972,9 +972,18 @@ export class ResearchBrowser implements ResearchBrowserToolController {
       ensureNotAborted(signal)
       const currentUrl = this.view.webContents.getURL()
       if (navigationOutcome === 'timed_out') this.navigationTimedOutUrl = currentUrl
+      let title = this.view.webContents.getTitle() || url
+      if (navigationOutcome === 'loaded') {
+        try {
+          const documentTitle: unknown = await this.view.webContents.executeJavaScript('document.title')
+          if (typeof documentTitle === 'string' && documentTitle.trim()) title = documentTitle.trim()
+        } catch {
+          // 页面关闭或跨平台标题事件较慢时，保留 Electron 当前标题作为回退。
+        }
+      }
       return {
         url: safePageUrl(currentUrl),
-        title: this.view.webContents.getTitle() || url,
+        title,
         ...(navigationOutcome === 'timed_out' ? { navigationTimedOut: true } : {})
       }
     } catch (error) {

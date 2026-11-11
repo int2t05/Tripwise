@@ -730,7 +730,7 @@ describe('本机运行日志', () => {
     expect(log).not.toContain('private address')
   })
 
-  it('并发写入后仍产生有效 JSONL，并将文件与目录限制为当前账户可读', async () => {
+  it('并发写入后仍产生有效 JSONL，并在 POSIX 系统限制文件与目录权限', async () => {
     const logger = await createTemporaryLogger()
     for (let index = 0; index < 32; index += 1) logger.info('agent.tool.completed', { toolName: `tool_${index}`, durationMs: index })
     await logger.flush()
@@ -739,8 +739,10 @@ describe('本机运行日志', () => {
     const lines = (await readFile(logPath, 'utf8')).trim().split('\n')
     expect(lines).toHaveLength(32)
     expect(lines.map((line) => JSON.parse(line).durationMs)).toEqual(Array.from({ length: 32 }, (_value, index) => index))
-    expect((await stat(logger.directory)).mode & 0o077).toBe(0)
-    expect((await stat(logPath)).mode & 0o077).toBe(0)
+    if (process.platform !== 'win32') {
+      expect((await stat(logger.directory)).mode & 0o077).toBe(0)
+      expect((await stat(logPath)).mode & 0o077).toBe(0)
+    }
   })
 
   it('超过单文件上限后按数量保留轮转日志', async () => {

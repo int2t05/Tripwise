@@ -522,7 +522,7 @@ describe('MCP stdio 插件运行时', () => {
 
   it('将服务握手失败保留为可关联的插件诊断来源', async () => {
     const server: McpServerSettings = {
-      id: 'missing-server', name: '失效服务', command: '/tripwise/missing-mcp-command', args: [],
+      id: 'missing-server', name: '失效服务', command: 'tripwise-missing-mcp-command', args: [],
       envKeys: [], enabled: true, allowedTools: ['search_places']
     }
     const session = await McpToolSession.open([server], { getMcpEnvironment: async () => ({}) }, new AbortController().signal)
@@ -533,12 +533,12 @@ describe('MCP stdio 插件运行时', () => {
         kind: 'plugin', connectorId: 'missing-server', title: '连接诊断 · 失效服务', status: 'error', url: ''
       })
       expect(session.diagnostics[0].summary).toContain('找不到插件程序')
-      expect(session.diagnostics[0].summary).not.toContain('/tripwise/missing-mcp-command')
+      expect(session.diagnostics[0].summary).not.toContain('tripwise-missing-mcp-command')
       expect(session.diagnostics[0].retry).toEqual({ kind: 'mcp-connect', serverId: 'missing-server' })
 
       const retried = await McpToolSession.retryConnection(server, { getMcpEnvironment: async () => ({}) }, new AbortController().signal)
       expect(retried.sources[0]).toMatchObject({ status: 'error', retry: { kind: 'mcp-connect', serverId: 'missing-server' } })
-      expect(JSON.stringify(retried)).not.toContain('/tripwise/missing-mcp-command')
+      expect(JSON.stringify(retried)).not.toContain('tripwise-missing-mcp-command')
     } finally {
       await session.close()
     }

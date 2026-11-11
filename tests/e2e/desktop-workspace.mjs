@@ -2402,6 +2402,10 @@ try {
     const label = document.querySelector('.browser-state-label')
     return !!label && label.textContent !== previousTitle
   }, browserSearchTitle)
+  await page.waitForFunction(() => {
+    const button = document.querySelector('button[aria-label="前进到下一页"]')
+    return button instanceof HTMLButtonElement && !button.disabled
+  })
   assert.equal(await browserForward.isEnabled(), true, '后退后应能前进。')
   await browserForward.click()
   await page.locator('.browser-state-label').getByText(browserSearchTitle, { exact: true }).waitFor({ state: 'visible' })
