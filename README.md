@@ -1,5 +1,7 @@
 # 行程有数 Tripwise
 
+[![Desktop validation](https://github.com/int2t05/Tripwise/actions/workflows/desktop.yml/badge.svg?branch=main)](https://github.com/int2t05/Tripwise/actions/workflows/desktop.yml)
+
 Tripwise 是一款开源桌面旅行规划 Agent。用户在对话中说明旅行条件，Agent 展示实际调用的工具与资料来源，生成一份结构化行程草案；用户可以逐轮修改、审阅差异，再决定是否保存。
 
 **当前状态：公开源码预览。** 计划结构和迭代流程已有自动化验证；路线、门店和时效事实可能待核验，适合继续对话完善。当前不提供正式签名安装包。
