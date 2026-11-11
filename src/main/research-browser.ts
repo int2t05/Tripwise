@@ -132,6 +132,8 @@ const BROWSER_CURSOR_PAUSE_BEFORE_NAVIGATION_MS = 420
 const BROWSER_CURSOR_MOVE_MS = 260
 /** 按下反馈留出足够观察时间，再触发页面动作。 */
 const BROWSER_CURSOR_PRESS_LEAD_MS = 220
+/** 滚动阶段至少保留足够绘制时间，让用户看清右侧状态和页面指针。 */
+const BROWSER_SCROLL_PHASE_MIN_MS = 280
 
 /** 页面内仅显示非交互指针；目标位置始终来自经过校验的 DOM 快照。 */
 const BROWSER_CURSOR_HELPER = `
@@ -309,6 +311,7 @@ function browserScrollScript(direction: 'up' | 'down', pages: number): string {
   return `(async () => {${BROWSER_CURSOR_HELPER}
     await showCursorAt(innerWidth * 0.72, innerHeight * 0.68, 42, 42, ${safeScriptLiteral(label)})
     const cursor = globalThis['${CURSOR_REGISTRY_NAME}']
+    const phaseStartedAt = performance.now()
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     if (cursor?.host?.isConnected) {
       cursor.phase = 'scrolling'
@@ -329,6 +332,8 @@ function browserScrollScript(direction: 'up' | 'down', pages: number): string {
       }
       requestAnimationFrame(waitForScrollEnd)
     })
+    const remainingPhaseMs = ${BROWSER_SCROLL_PHASE_MIN_MS} - (performance.now() - phaseStartedAt)
+    if (remainingPhaseMs > 0) await new Promise((resolve) => setTimeout(resolve, remainingPhaseMs))
     if (cursor?.host?.isConnected) {
       cursor.phase = 'scrolled'
       cursor.host.dataset.phase = 'scrolled'
