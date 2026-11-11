@@ -8,7 +8,7 @@
 
 <p align="center">
   <a href="https://github.com/int2t05/Tripwise/actions/workflows/desktop.yml"><img src="https://github.com/int2t05/Tripwise/actions/workflows/desktop.yml/badge.svg?branch=main" alt="Desktop validation"></a>
-  · <a href="https://github.com/int2t05/Tripwise/releases/latest">下载预览版</a>
+  · <a href="https://github.com/int2t05/Tripwise/releases">下载预览版</a>
   · <a href="LICENSE">MIT</a>
 </p>
 
@@ -26,7 +26,15 @@ Tripwise 是一款开源桌面旅行规划 Agent。它在对话中了解出行�
 
 ### 下载
 
-从 [GitHub Releases](https://github.com/int2t05/Tripwise/releases/latest) 下载 macOS、Windows 或 Linux 预览包，并用包内 `SHA256SUMS` 校验文件。
+从 [GitHub Releases](https://github.com/int2t05/Tripwise/releases) 下载对应系统的安装包和 `SHA256SUMS`：
+
+| 系统 | 文件 |
+|---|---|
+| macOS Apple Silicon | `Tripwise-<版本>-arm64.dmg`；ZIP 可直接解压运行 |
+| Windows x64 | `Tripwise-<版本>-x64-setup.exe`；ZIP 可免安装解压 |
+| Linux x64 | `Tripwise-<版本>-x64.AppImage` |
+
+macOS 可用 `shasum -a 256 -c SHA256SUMS` 校验；Linux 用 `sha256sum -c SHA256SUMS`。Windows 用 PowerShell 的 `Get-FileHash <文件> -Algorithm SHA256` 对照清单。Linux 首次运行前给 AppImage 添加执行权限。
 
 当前预览包尚未进行正式代码签名或公证，系统可能提示发行者未验证或阻止启动。需要稳定安装体验时，可先从源码运行。
 
