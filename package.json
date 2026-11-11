@@ -1,0 +1,82 @@
+{
+  "name": "tripwise",
+  "version": "0.1.0",
+  "private": true,
+  "description": "行程有数：面向个人旅行者的多来源规划桌面工作区",
+  "author": "Tripwise Contributors",
+  "desktopName": "tripwise",
+  "license": "MIT",
+  "main": "./out/main/index.js",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "electron-vite dev",
+    "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.main.json && tsc --noEmit -p tsconfig.preload.json",
+    "test": "vitest run && node --test scripts/package-candidate-all.node-test.mjs scripts/evaluate-travel-results.node-test.mjs scripts/beijing-case-metrics.node-test.mjs",
+    "test:e2e:desktop": "npm run build && node tests/e2e/desktop-workspace.mjs && node tests/e2e/single-instance.mjs",
+    "test:e2e:firecrawl-live": "npm run build && node tests/e2e/firecrawl-browser-fallback-live.mjs",
+    "evaluate:beijing:desktop-live": "npm run build && node tests/e2e/beijing-desktop-live.mjs",
+    "test:e2e:packaged:mac": "node scripts/test-packaged-mac.mjs",
+    "build": "electron-vite build",
+    "package:dir": "npm run build && electron-builder --dir",
+    "package:mac": "npm run check && electron-builder --mac --arm64 && npm run checksums",
+    "package:win": "npm run check && electron-builder --win --x64 && npm run checksums",
+    "package:linux": "npm run check && electron-builder --linux --x64 && npm run checksums",
+    "package:all": "npm run check && node tests/e2e/desktop-workspace.mjs && electron-builder --mac --arm64 && electron-builder --win --x64 && electron-builder --linux --x64 && npm run checksums",
+    "package:candidate:mac": "node scripts/package-candidate-all.mjs mac",
+    "package:candidate:win": "node scripts/package-candidate-all.mjs win",
+    "package:candidate:linux": "node scripts/package-candidate-all.mjs linux",
+    "package:candidate:all": "node scripts/package-candidate-all.mjs all",
+    "package": "npm run check && electron-builder && npm run checksums",
+    "checksums": "node scripts/update-package-checksums.mjs",
+    "audit:runtime": "npm audit --omit=dev",
+    "evaluate:travel": "node scripts/evaluate-travel-results.mjs",
+    "evaluate:travel:live": "node scripts/run-travel-evaluation-live.mjs",
+    "verify:candidate": "node scripts/verify-candidate.mjs",
+    "verify:candidate:artifacts": "node scripts/verify-candidate.mjs --artifacts-only",
+    "verify:candidate:mac": "node scripts/verify-candidate.mjs --platform=mac",
+    "verify:candidate:win": "node scripts/verify-candidate.mjs --platform=win",
+    "verify:candidate:linux": "node scripts/verify-candidate.mjs --platform=linux",
+    "check": "npm run typecheck && npm test && npm run build"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/client": "2.3.1",
+    "ipaddr.js": "2.5.0",
+    "lucide-react": "1.58.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "socks": "2.8.10",
+    "undici": "7.30.1"
+  },
+  "devDependencies": {
+    "@electron/asar": "3.4.1",
+    "@electron/fuses": "1.8.0",
+    "@types/node": "22.19.0",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "6.1.2",
+    "axe-core": "4.14.0",
+    "electron": "^45.2.3",
+    "electron-builder": "26.18.1",
+    "electron-vite": "6.0.0",
+    "playwright-core": "1.64.1",
+    "typescript": "5.9.3",
+    "vite": "8.3.4",
+    "vitest": "5.0.5"
+  },
+  "overrides": {
+    "@electron/get": "5.1.0"
+  },
+  "allowScripts": {
+    "electron-winstaller@5.4.0": true
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/int2t05/Tripwise.git"
+  },
+  "homepage": "https://github.com/int2t05/Tripwise#readme",
+  "bugs": {
+    "url": "https://github.com/int2t05/Tripwise/issues"
+  }
+}

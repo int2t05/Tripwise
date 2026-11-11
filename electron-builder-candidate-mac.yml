@@ -1,0 +1,4 @@
+# 本机预览专用；配置 CSC_NAME/CSC_LINK 或 TRIPWISE_MAC_STABLE_SIGNING=1 时改用正式 macOS 构建配置。
+extends: ./electron-builder.yml
+mac:
+  identity: null

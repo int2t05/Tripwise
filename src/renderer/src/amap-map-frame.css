@@ -1,0 +1,32 @@
+/* 地图页面独立装载样式，避免高德地图脚本影响 Tripwise 主工作区。 */
+html,
+body,
+#map {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
+body,
+#map {
+  background: #edf1eb;
+}
+
+.tripwise-map-marker {
+  display: grid;
+  width: 27px;
+  height: 27px;
+  place-items: center;
+  color: #fff;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  background: #4f6c56;
+  box-shadow: 0 2px 7px rgba(35, 53, 38, .3);
+  font: 700 13px/1 system-ui, sans-serif;
+}
+
+.tripwise-map-marker.map-marker-selected {
+  background: #a05a40;
+  box-shadow: 0 0 0 5px rgba(194, 117, 85, .18), 0 2px 7px rgba(35, 53, 38, .3);
+}

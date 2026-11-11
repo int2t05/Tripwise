@@ -1,0 +1,24 @@
+node_modules/
+out/
+release/
+release-candidate*/
+dist/
+.DS_Store
+*.log
+*.log.*
+.env
+.env.*
+!.env.example
+coverage/
+*.tsbuildinfo
+
+# 本机旅行资料和凭证不得进入项目仓库。
+tripwise-credentials.json
+tripwise-data.json
+tripwise-secrets.json
+logs/
+
+# 完整评测日志可能包含用户提供的旅行细节，仅保存在本机。
+docs/evaluation/TRAVEL-CASES.md
+docs/evaluation/runs/
+docs/evaluation/results-*.json

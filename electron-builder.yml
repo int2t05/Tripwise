@@ -1,0 +1,33 @@
+appId: com.tripwise.desktop
+productName: 行程有数
+asar: true
+electronFuses:
+  runAsNode: false
+  enableNodeOptionsEnvironmentVariable: false
+  enableNodeCliInspectArguments: false
+  enableCookieEncryption: false
+  enableEmbeddedAsarIntegrityValidation: true
+  onlyLoadAppFromAsar: true
+directories:
+  output: release
+files:
+  - out/**
+  - package.json
+mac:
+  icon: build/icon.svg
+  category: public.app-category.travel
+  target:
+    - dmg
+    - zip
+win:
+  icon: build/icon.svg
+  target:
+    - nsis
+    - zip
+linux:
+  icon: build/icon.svg
+  category: Office
+  syncDesktopName: true
+  # 首发 Linux 用单文件 AppImage；DEB 需先补充真实项目主页与维护者资料。
+  target:
+    - AppImage
