@@ -290,7 +290,9 @@ async function packageCandidate(selection) {
     throw new Error('用法：npm run package:candidate:{mac|win|linux|all}')
   }
   await assertCandidateOutputAvailable(candidateDirectory)
-  await runNpmScript('check')
+  // GitHub 工作流已对同一提交完成门禁；本机单独打包仍自行运行检查。
+  const precheckedInWorkflow = process.env.GITHUB_ACTIONS === 'true' && process.env.TRIPWISE_CANDIDATE_PRECHECK === 'passed'
+  if (!precheckedInWorkflow) await runNpmScript('check')
 
   const targets = selection === 'all' ? Object.keys(platforms) : [selection]
   if (selection === 'all') {

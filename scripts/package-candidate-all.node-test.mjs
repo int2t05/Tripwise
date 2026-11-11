@@ -119,7 +119,7 @@ describe('候选包输出目录', () => {
     assert.equal(candidateOutputDirectoryName({}), 'release-candidate-current')
     assert.equal(candidateOutputDirectoryName({ TRIPWISE_CANDIDATE_OUTPUT: 'release-candidate-copy-review' }), 'release-candidate-copy-review')
     assert.equal(candidateOutputDirectory('/project', { TRIPWISE_CANDIDATE_OUTPUT: 'release-candidate-copy-review' }),
-      resolve('/project/release-candidate-copy-review'))
+      join('/project', 'release-candidate-copy-review'))
   })
 
   it('拒绝绝对路径、目录穿越和非候选目录名', () => {
@@ -142,6 +142,7 @@ describe('候选包输出目录', () => {
     assert.match(jobConfiguration, /executable: release-candidate\//u)
     assert.match(jobConfiguration, /artifact_paths:[\s\S]*?release-candidate\//u)
     assert.match(workflow, /Build unpacked Linux test application[\s\S]*?release-candidate-test/u)
+    assert.match(workflow, /TRIPWISE_CANDIDATE_PRECHECK: passed/u)
   })
 })
 

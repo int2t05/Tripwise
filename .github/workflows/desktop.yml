@@ -80,6 +80,8 @@ jobs:
 
       - name: Build and verify platform candidate
         if: github.event_name != 'pull_request'
+        env:
+          TRIPWISE_CANDIDATE_PRECHECK: passed
         run: npm run "package:candidate:${{ matrix.platform }}"
 
       - name: Build unpacked Linux test application
