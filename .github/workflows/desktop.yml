@@ -115,4 +115,5 @@ jobs:
 
       - name: Remove packaged test application
         if: always() && matrix.platform != 'mac'
-        run: node -e "require('node:fs').rmSync('release-candidate-test', { recursive: true, force: true })"
+        run: >-
+          node -e "require('node:fs').rmSync('release-candidate-test', { recursive: true, force: true })"
