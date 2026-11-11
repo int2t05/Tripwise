@@ -1762,6 +1762,12 @@ try {
   if (process.env.TRIPWISE_E2E_PLAN_SCREENSHOT) {
     await candidate.screenshot({ path: process.env.TRIPWISE_E2E_PLAN_SCREENSHOT })
   }
+  if (process.env.TRIPWISE_E2E_WORKSPACE_SCREENSHOT) {
+    // 统一 CSS 视口并对齐计划卡片，避免 Retina 分辨率把 README 截图拉得过宽。
+    await page.setViewportSize({ width: 1480, height: 940 })
+    await candidate.evaluate((element) => element.scrollIntoView({ block: 'start', inline: 'nearest' }))
+    await page.screenshot({ path: process.env.TRIPWISE_E2E_WORKSPACE_SCREENSHOT })
+  }
   await budgetDisclosure.locator('summary').click()
   await candidate.getByText('完整估算 ¥2050.00–¥2630.00 在全程预算 ¥5000.00内。', { exact: true }).waitFor({ state: 'visible' })
   await page.locator('.agent-progress.agent-progress-completed').last().waitFor({ state: 'visible' })
@@ -2550,8 +2556,9 @@ try {
   const currentStopRemove = historyRestore.locator('.itinerary-restore-choice').filter({ hasText: '移除本次新增地点：天坛' })
   await historicalStopAdd.locator('input').check()
   if (process.env.TRIPWISE_E2E_HISTORY_SELECTION_SCREENSHOT) {
+    await page.setViewportSize({ width: 1480, height: 940 })
     await historyRestore.scrollIntoViewIfNeeded()
-    await page.screenshot({ path: process.env.TRIPWISE_E2E_HISTORY_SELECTION_SCREENSHOT, fullPage: true })
+    await page.screenshot({ path: process.env.TRIPWISE_E2E_HISTORY_SELECTION_SCREENSHOT })
   }
   assert.equal(await historyRestore.locator('.itinerary-restore-apply').isDisabled(), false, '选中单项结构差异后应可应用。')
   await historyRestore.locator('.itinerary-restore-apply').click()
